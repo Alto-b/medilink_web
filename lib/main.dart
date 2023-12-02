@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -10,6 +11,7 @@ import 'package:medilink/admin/model/telemedicine_model.dart';
 import 'package:medilink/admin/pages/dashboard.dart';
 import 'package:medilink/admin/sidebar.dart';
 import 'package:medilink/guest/model/usermodel.dart';
+import 'package:medilink/guest/pages/login.dart';
 import 'package:medilink/guest/pages/splash.dart';
 import 'package:medilink/user/navbar.dart';
 import 'package:medilink/user/pages/homepage.dart';
@@ -54,12 +56,13 @@ Future<void> main() async {
     Hive.registerAdapter(DoctorModelAdapter());
   }
 
-  runApp(const MyApp());
+  runApp( MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+   MyApp({super.key});
 
+  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -75,7 +78,18 @@ class MyApp extends StatelessWidget {
       ),
       
       
-      home: MainView()
+      home: FutureBuilder(
+        future: _initialization,
+        builder:(context, snapshot) {
+          if(snapshot.hasError){
+            print("error");
+          }
+          if(snapshot.connectionState == ConnectionState.done){
+            return LoginPage();
+          }
+          return CircularProgressIndicator();
+        }, 
+      )
     );
   }
 }

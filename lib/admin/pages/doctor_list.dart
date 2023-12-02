@@ -1,15 +1,16 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:image_picker_web/image_picker_web.dart';
 import 'package:medilink/admin/db/doctor_functions.dart';
 import 'package:medilink/admin/model/deptmodel.dart';
 import 'package:medilink/admin/model/doctor_model.dart';
 import 'package:medilink/admin/model/hospmodel.dart';
+import 'package:medilink/admin/pages/doctor.dart';
 import 'package:medilink/styles/custom_widgets.dart';
 
 class DoctorListPage extends StatefulWidget {
@@ -19,10 +20,9 @@ class DoctorListPage extends StatefulWidget {
   State<DoctorListPage> createState() => _DoctorListPageState();
 }
 
-class _DoctorListPageState extends State<DoctorListPage> {
+class _DoctorListPageState extends State<DoctorListPage>  {
 
   final _formKey = GlobalKey<FormState>();
-  File? _selectedImage;
   final TextEditingController _nameController=TextEditingController();
   final TextEditingController _qualificationController=TextEditingController();
   final TextEditingController _dobController=TextEditingController();
@@ -36,6 +36,9 @@ class _DoctorListPageState extends State<DoctorListPage> {
   List<HospModel> hospitals = [];
   String? selectedDepartmentName;
   String? selectedHospitalName;
+
+   bool imageAvailable = false;
+  late Uint8List imageFile;
 
   @override
   void initState() {
@@ -69,8 +72,6 @@ void updateLists() {
 
   @override
   Widget build(BuildContext context) {
-//  getDoctor();
-   
 
     return Scaffold(
 
@@ -88,11 +89,17 @@ void updateLists() {
         //listener
                   Container(
                     //color: Colors.red,
-                      height: 690,
+                      height: 1000,
                       child: ValueListenableBuilder(
                         valueListenable: doctorListNotifier,
                         builder: (BuildContext ctx, List<DoctorModel> doctorList,Widget? child) {
-        
+                              if (doctorList.isEmpty) {
+                    return Center(
+                      child: TextButton(onPressed: () {
+                        Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => AddDoctor(),));
+                      }, child: Text("Add doctors"))
+                    );
+                  }
                         return ListView.separated(
                         itemBuilder:((context, index) {
                           final data=doctorList[index];
@@ -132,7 +139,7 @@ void updateLists() {
                                 //leading: Text("${index+1}",),
                                 leading: CircleAvatar(
                                   radius: 40,
-                                  backgroundImage: FileImage(File(data.photo)),
+                                  backgroundImage: MemoryImage(data.photo)
                                 ),
                                 title: Text("Dr.${data.name}",style:doctorListTitle(),),
                                 contentPadding: EdgeInsets.all(5),      
@@ -168,9 +175,9 @@ void updateLists() {
   }
 
    //to edit section
-  void _editSheet(BuildContext context,int id,String photo,String name,String gender,String qualification,String hosp,String dob,String doj,String dept){
+  void _editSheet(BuildContext context,int id,Uint8List photo,String name,String gender,String qualification,String hosp,String dob,String doj,String dept){
     
-     _selectedImage = File(photo);
+     imageFile = photo;
      _nameController.text=name;
      selectedGender=gender;
      _qualificationController.text=qualification;
@@ -201,30 +208,26 @@ void updateLists() {
                         children: [
                   Padding(
                     padding: const EdgeInsets.all(15.0),
-                    child: Container(
-                        height: 150,
-                        width: 150,
+                    child: GestureDetector(
+                       onTap: () async {
+                        final image = await ImagePickerWeb.getImageAsBytes();
+              
+                        setState(() {
+                          imageFile = image!;
+                          imageAvailable=true;
+                        });
+                      },
+                      child: Container(
+                        height: 120,
+                        width: 120,
                         decoration: BoxDecoration(
-                          border: Border.all(width: 2, color: const Color.fromARGB(255, 18, 18, 18)),
-                          //borderRadius: BorderRadius.circular(10)
+                          color: Colors.grey[100]
                         ),
-                        child: _selectedImage != null
-                            ? Image.file(_selectedImage! as File, fit: BoxFit.fill,)
-                            : Center(
-                                child: Icon(Icons.add_a_photo))),
-                  ),
-                  Column(children: [
-                    IconButton(
-                        onPressed: () {
-                          _pickImage();
-                        },
-                        icon: Icon(Icons.photo_library_outlined),tooltip: "select from gallery",),
-                    IconButton(
-                        onPressed: () {
-                          _photoImage();
-                        },
-                        icon: Icon(Icons.camera_alt_outlined),tooltip: "open camera")
-                  ])
+                        child: imageAvailable?Image.memory(imageFile) :Icon(Icons.add_a_photo),
+                      ),
+                    ),
+                  )
+                  
                 ]),SizedBox(height: 20,),
               
         //full name
@@ -366,7 +369,7 @@ void updateLists() {
         //submit button
                   ElevatedButton(onPressed: (){
                     // submit();
-                  editDoctor(id,_selectedImage!.path, _nameController.text,gender, _qualificationController.text,selectedHospitalName!, _dobController.text, _dojController.text, selectedDepartmentName!);
+                  editDoctor(id,imageFile, _nameController.text,gender, _qualificationController.text,selectedHospitalName!, _dobController.text, _dojController.text, selectedDepartmentName!);
                   showSnackBarSuccess(context, "Details updated successfully!");
                   Navigator.pop(context);
                   }, child: Text("Update"))
@@ -428,28 +431,6 @@ void showSnackBarSuccess(BuildContext context, String message) {
 }
 
 
-//IMAGE THROUGH CAMERA
-Future<void> _photoImage() async {
-    final picker = ImagePicker();
-    final pickedImage = await picker.pickImage(source: ImageSource.camera);
-
-    if (pickedImage != null) {
-      setState(() {
-        _selectedImage = File(pickedImage.path);
-      });
-    }
-  }
-  //IMAGE FROM PHOTOS
-Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
-
-    if (pickedImage != null) {
-      setState(() {
-        _selectedImage = File(pickedImage.path);
-      });
-    }
-  }
 //to select dob
  Future<void> _selectDob(BuildContext context) async {
     //print("dob clicked");

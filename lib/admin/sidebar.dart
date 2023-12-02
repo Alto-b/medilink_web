@@ -1,17 +1,17 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:medilink/admin/pages/dash_web.dart';
-import 'package:medilink/admin/pages/dashboard.dart';
+import 'package:medilink/admin/pages/appointment_view.dart';
 import 'package:medilink/admin/pages/department.dart';
 import 'package:medilink/admin/pages/doctor.dart';
 import 'package:medilink/admin/pages/doctor_list.dart';
+import 'package:medilink/admin/pages/feedbackview.dart';
 import 'package:medilink/admin/pages/hospital.dart';
-//import 'package:medilink/admin/pages/new_department.dart';
 import 'package:medilink/admin/pages/statistics.dart';
 import 'package:medilink/admin/pages/telemedicine_view.dart';
-import 'package:medilink/user/pages/feedback.dart';
-import 'package:medilink/user/pages/telemedicine.dart';
+import 'package:medilink/guest/pages/login.dart';
+import 'package:medilink/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:side_navigation/side_navigation.dart';
 
 class MainView extends StatefulWidget {
@@ -23,28 +23,16 @@ class MainView extends StatefulWidget {
 
 class _MainViewState extends State<MainView> {
 
-  List<Widget> views = const [
-    Center(
-      child: Text('Dashboard'),
-    ),
-    Center(
-      child: Text('Account'),
-    ),
-    Center(
-      child: Text('Settings'),
-    ),
-  ];
   int selectedIndex = 0;
-   List screen = const[
-    DashWeb(),
+   List screen = [
     StatisticsPage(),
     DepartmentPage(),
     HospitalPage(),
     AddDoctor(),
     DoctorListPage(),
+    AppointmentViewPage(),
     TelemedicineViewPage(),
-    FeedbackPage(),
-
+    FeedbackViewPage(),
   ];
 
   @override
@@ -58,25 +46,23 @@ class _MainViewState extends State<MainView> {
                 child: Icon(Icons.admin_panel_settings_outlined),
               ),
               title: Text('Welcome',),
-              subtitle: Text('ADMIN')
+              subtitle: Text('ADMIN'),
             ),
             footer: SideNavigationBarFooter(
               label: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                    Icon(Icons.copyright,color: Colors.grey,),
-                Text("Medilink 2023",style: TextStyle(color: Colors.grey),)
-              
+                Text("Medilink 2023",style: TextStyle(color: Colors.grey),),
+                IconButton(onPressed: (){
+                  // Call the logOut function when the logout button is pressed
+                  logOut(context);
+                }, icon: Icon(Icons.logout))
                 ],
               )
             ),
             selectedIndex: selectedIndex,
-            items: const [
-              //dashboard
-              SideNavigationBarItem(
-                icon: Icons.dashboard,
-                label: 'Dashboard',
-              ),
+            items:const [
               //statistics
               SideNavigationBarItem(
                 icon: Icons.analytics,
@@ -105,6 +91,11 @@ class _MainViewState extends State<MainView> {
               //telemedicine
               SideNavigationBarItem(
                 icon: Icons.medication_rounded,
+                label: 'Appointments',
+              ),
+              //telemedicine
+              SideNavigationBarItem(
+                icon: Icons.medication_rounded,
                 label: 'Telemedicine',
               ),
               //feedback
@@ -113,11 +104,20 @@ class _MainViewState extends State<MainView> {
                 label: 'Feedback',
               ),
              
+              SideNavigationBarItem(
+                icon: Icons.logout,
+                label: 'Logout',
+              ),
             ],
             onTap: (index) {
-              setState(() {
-                selectedIndex = index;
-              });
+              if (index == 8) {
+                // If the selected item is "Logout", call the logOut function
+                logOut(context);
+              } else {
+                setState(() {
+                  selectedIndex = index;
+                });
+              }
             },
           ),
           Expanded(
@@ -126,5 +126,40 @@ class _MainViewState extends State<MainView> {
         ],
       ),
     );
+  }
+
+  void logOut(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Logout"),
+          content: Text("Do you want to leave?"),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                signOut(context);
+              },
+              child: Text("Yes"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text("No"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void signOut(BuildContext ctx) async {
+    final _sharedPrefs = await SharedPreferences.getInstance();
+    await _sharedPrefs.clear();
+
+    Navigator.of(ctx).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (ctx) => LoginPage()), (route) => false);
+    _sharedPrefs.setBool(SAVE_KEY_NAME, false);
   }
 }

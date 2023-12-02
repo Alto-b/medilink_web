@@ -1,10 +1,11 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:image_picker_web/image_picker_web.dart';
 import 'package:medilink/admin/db/doctor_functions.dart';
 import 'package:medilink/admin/model/deptmodel.dart';
 import 'package:medilink/admin/model/doctor_model.dart';
@@ -23,13 +24,16 @@ class AddDoctor extends StatefulWidget {
 class _AddDoctorState extends State<AddDoctor> {
 
   final _formKey = GlobalKey<FormState>();
-  File? _selectedImage;
+
   final TextEditingController _nameController=TextEditingController();
   final TextEditingController _qualificationController=TextEditingController();
   final TextEditingController _dobController=TextEditingController();
   final TextEditingController _dojController=TextEditingController();
   String? selectedGender;
   final List<String> genderOptions = ['Male', 'Female', 'Not Specified'];
+
+    bool imageAvailable = false;
+  late Uint8List imageFile;
 
  late Box<DepartmentModel> deptBox;
   late Box<HospModel> hospBox;
@@ -90,30 +94,26 @@ void updateLists() {
                           children: [
                     Padding(
                       padding: const EdgeInsets.all(15.0),
+                      child:GestureDetector(
+                       onTap: () async {
+                        final image = await ImagePickerWeb.getImageAsBytes();
+              
+                        setState(() {
+                          imageFile = image!;
+                          imageAvailable=true;
+                        });
+                      },
                       child: Container(
-                          height: 150,
-                          width: 150,
-                          decoration: BoxDecoration(
-                            border: Border.all(width: 2, color: const Color.fromARGB(255, 18, 18, 18)),
-                            //borderRadius: BorderRadius.circular(10)
-                          ),
-                          child: _selectedImage != null
-                              ? Image.file(_selectedImage! as File, fit: BoxFit.fill,)
-                              : Center(
-                                  child: Icon(Icons.add_a_photo))),
+                        height: 120,
+                        width: 120,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100]
+                        ),
+                        child: imageAvailable?Image.memory(imageFile) :Icon(Icons.add_a_photo), 
+                      ),
+                    )
                     ),
-                    Column(children: [
-                      IconButton(
-                          onPressed: () {
-                            _pickImage();
-                          },
-                          icon: Icon(Icons.photo_library_outlined),tooltip: "select from gallery",),
-                      IconButton(
-                          onPressed: () {
-                            _photoImage();
-                          },
-                          icon: Icon(Icons.camera_alt_outlined),tooltip: "open camera")
-                    ])
+                   
                   ]),SizedBox(height: 20,),
                   
             //full name
@@ -305,28 +305,28 @@ String? validateQualification(String? value) {
 }
   
 //IMAGE THROUGH CAMERA
-Future<void> _photoImage() async {
-    final picker = ImagePicker();
-    final pickedImage = await picker.pickImage(source: ImageSource.camera);
+// Future<void> _photoImage() async {
+//     final picker = ImagePicker();
+//     final pickedImage = await picker.pickImage(source: ImageSource.camera);
 
-    if (pickedImage != null) {
-      setState(() {
-        _selectedImage = File(pickedImage.path);
-      });
-    }
-  }
+//     if (pickedImage != null) {
+//       setState(() {
+//         _selectedImage = File(pickedImage.path);
+//       });
+//     }
+//   }
 
 //IMAGE FROM PHOTOS
-Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+// Future<void> _pickImage() async {
+//     final picker = ImagePicker();
+//     final pickedImage = await picker.pickImage(source: ImageSource.gallery);
 
-    if (pickedImage != null) {
-      setState(() {
-        _selectedImage = File(pickedImage.path);
-      });
-    }
-  }
+//     if (pickedImage != null) {
+//       setState(() {
+//         _selectedImage = File(pickedImage.path);
+//       });
+//     }
+//   }
 
 //to select dob
  Future<void> _selectDob(BuildContext context) async {
@@ -371,7 +371,7 @@ Future<void> _pickImage() async {
 }
 
 Future<void> submit() async{
-  final imagepath=_selectedImage!.path;
+  final imagepath=imageFile;
   final String name=_nameController.text.trim();
   final String gender=selectedGender ?? "";
   final String qualification=_qualificationController.text.trim();

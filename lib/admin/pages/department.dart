@@ -1,16 +1,14 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, no_leading_underscores_for_local_identifiers
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
-import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:hive/hive.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:image_picker_web/image_picker_web.dart';
 import 'package:medilink/admin/db/dept_functions.dart';
 import 'package:medilink/admin/model/deptmodel.dart';
 import 'package:medilink/styles/custom_widgets.dart';
-
 
 class DepartmentPage extends StatefulWidget {
   const DepartmentPage({super.key});
@@ -21,68 +19,87 @@ class DepartmentPage extends StatefulWidget {
 
 class _DepartmentPageState extends State<DepartmentPage> {
 
+  @override
+  void  initState(){
+    super.initState();
+    getDepartment();
+  }
+
+  final _formKey = GlobalKey<FormState>();
   final _departmentController=TextEditingController();
   final _editController=TextEditingController();
-    final _formKey = GlobalKey<FormState>();
-    final _formKey1 = GlobalKey<FormState>();
+  final _formKey1 = GlobalKey<FormState>();
 
-    File? _selectedImage;
+  bool imageAvailable = false;
+  bool imageAvailableE = false;
+  late Uint8List imageFile;
+  late Uint8List imageFileE;
 
-// //to generate a unique key
-//     int generateUniqueId() {
-//   return DateTime.now().microsecond;
-// }
-
-//to add department
-    Future<void> addDepartmentButton() async{
-      final _dept=_departmentController.text.trim();
-      final imagepath=_selectedImage!.path;
-      if(_dept.isEmpty){
-        //print('empty');
-        return ;
-      }
-      else{
-      //print('$_dept');
-      Uint8List imagepath1=imagepath as Uint8List;
-      final _department=DepartmentModel( dept: _dept,photo:imagepath1 ,id:-1);
-      addDepartment(_department);
-      }
-    }
-
-// //to add department
-//     Future<void> editDepartmentButton() async{
-//       final _dept=_departmentController.text.trim();
-//       final imagepath=_selectedImage!.path;
-//       if(_dept.isEmpty){
-//         //print('empty');
-//         return ;
-//       }
-//       else{
-//       //print('$_dept');
-//       //final _department=DepartmentModel( dept: _dept,photo:imagepath ,id:-1);
-//       editDepartment(id, _dept, imagepath)
-//       }
-//     }
   @override
   Widget build(BuildContext context) {
-
-    getDepartment();
-
     return Scaffold(
-      
-      //appbar
-      appBar: AppBar( 
-        title: Text("DEPARTMENTS",style:appBarTitleStyle()),
+
+      appBar: AppBar(
+        title: Text("Departments",style: appBarTitleStyle(),),
       ),
 
-      //body
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
+        child: Center(
           child: Column(
             children: [
+              Container(
+                width: 500,
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                  children: [
+                    GestureDetector(
+                       onTap: () async {
+                        final image = await ImagePickerWeb.getImageAsBytes();
+              
+                        setState(() {
+                          imageFile = image!;
+                          imageAvailable=true;
+                        });
+                      },
+                      child: Container(
+                        height: 120,
+                        width: 120,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100]
+                        ),
+                        child: imageAvailable?Image.memory(imageFile) :Icon(Icons.add_a_photo),
+                      ),
+                    ),SizedBox(height: 10,),
+                    TextFormField(
+                      controller: _departmentController,
+                      validator: (value){
+                    if(value==null || value.isEmpty){
+                      return 'cannot be empty';
+                    }
+                    if (!RegExp(r'^[a-zA-Z]+$').hasMatch(value)) {
+                       return 'Only characters are allowed';
+                    }
+                    return null;
+                      },
+                      decoration: InputDecoration(
+                        hintText: "Enter Department"
+                      ),
+                    ),SizedBox(height: 20,),
+                    ElevatedButton(onPressed: (){
+                      addDepartmentButton();
+                      _departmentController.clear();
+                      
+                    }, child: Text("ADD")),
+                  ],
+                )),
+              ),SizedBox(height: 50,),
+              
+              //listing departments
+
               SizedBox(
                   height: 750,
+                  width: 750,
                   child: ValueListenableBuilder(
                     valueListenable: deptListNotifier,
                     builder: (BuildContext ctx, List<DepartmentModel> departmentList,Widget? child) {
@@ -98,7 +115,7 @@ class _DepartmentPageState extends State<DepartmentPage> {
                               //edit
                               SlidableAction(onPressed: (context) {
 
-                             _editSheet(context,data.photo as String,data.dept,data.id!,);
+                             _editSheet(context,data.photo,data.dept,data.id!,);
                                  },
                               icon:Icons.edit,
                               backgroundColor: Color.fromARGB(255, 10, 112, 196),
@@ -125,7 +142,7 @@ class _DepartmentPageState extends State<DepartmentPage> {
                                 CircleAvatar(
                               radius: 25,
                               backgroundColor: Colors.transparent,
-                              backgroundImage: FileImage(File(data.photo as String)),
+                              backgroundImage: MemoryImage(data.photo)
                             ),    SizedBox(width: 20,),
                                 Text(data.dept),
                               ],
@@ -141,102 +158,42 @@ class _DepartmentPageState extends State<DepartmentPage> {
                   itemCount:departmentList.length);
                  }, ),
                 ),
+            
             ],
+
+            
           ),
         ),
       ),
-
-      floatingActionButton: FloatingActionButton(onPressed: (){
-        _addSheet(context);
-      },
-            mini: true,
-            child: Icon(Icons.add),),
     );
   }
- //to add section
-  void _addSheet(BuildContext context){
-      showModalBottomSheet(context: context, builder:(context) {
-        
-       return Container(             
-        child: Padding(
-           padding: const EdgeInsets.all(25.0),                   child: Form(
-          key: _formKey,
-                child: Column(
-                children: [
-                  //add photo
-                     Row(
-                      children: [
-                Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Container(
-                      height: 150,
-                      width: 150,
-                      decoration: BoxDecoration(
-                        border: Border.all(width: 2, color: const Color.fromARGB(255, 18, 18, 18)),
-                        //borderRadius: BorderRadius.circular(10)
-                      ),
-                      child: _selectedImage != null
-                          ? Image.file(_selectedImage! as File, fit: BoxFit.fill,)
-                          : Center(
-                              child: Icon(Icons.add_a_photo))),
-                ),
-                Column(children: [
-                  IconButton(
-                      onPressed: () {
-                        _pickImage();
-                        
-                      },
-                      icon: Icon(Icons.photo_library_outlined),tooltip: "select from gallery",),
-                ])
-              ]),SizedBox(height: 20,),
 
-                  SizedBox(height: 20,),
-//department txt
-                  TextFormField(
-                    validator: (value){
-                      if(value==null || value.isEmpty){
-                        return 'cannot be empty';
-                      }
-                      if (!RegExp(r'^[a-zA-Z]+$').hasMatch(value)) {
-                         return 'Only characters are allowed';
-                      }
-                      return null;
-                    },
-                    controller: _departmentController,
-                    decoration: InputDecoration(
-                      hintText: "Enter department"
-                    ),
-                  ),
-                  SizedBox(height: 20,),
+//to add department
+Future<void> addDepartmentButton() async{
+  final _dept=_departmentController.text.trim();
+  final imagePath=imageFile;
+  if(_dept.isEmpty){
 
-//button          
-                ElevatedButton(onPressed: (){
-                  //print("add button clicked");
-                  addDepartmentButton();
-                  
-                  _departmentController.clear();
-                  Navigator.pop(context);
-                },
-                 child: Text("Add")),
-                 SizedBox(height: 40,)
-        
-                ],
-              )),
-                                    ),
-                                 );
-                               }, );
   }
+  else{
+    final _department = DepartmentModel(dept: _dept, photo: imagePath);
+    addDepartment(_department);
+    //print(imagePath);
+    setState(() {
+      imageAvailable=false;
+    });
+    
+  }
+}
 
-
- //to edit section
-  void _editSheet(BuildContext context,String photo,String department,int id){
+void _editSheet(BuildContext context,Uint8List photo,String department,int id){
     _editController.text=department;
-     _selectedImage = File(photo);
+     imageFileE = photo;
       showModalBottomSheet(context: context, builder:(context) {
         
         //_selectedImage=photo as File?;
       return SingleChildScrollView(
-        child: Container(  
+        child: SizedBox(  
           height: 600, 
                child: Padding(
                padding: const EdgeInsets.all(25.0),
@@ -250,27 +207,25 @@ class _DepartmentPageState extends State<DepartmentPage> {
                         children: [
                   Padding(
                     padding: const EdgeInsets.all(15.0),
-                    child: Container(
-                        height: 150,
-                        width: 150,
+                    child:GestureDetector(
+                       onTap: () async {
+                        final image = await ImagePickerWeb.getImageAsBytes();
+              
+                        setState(() {
+                          imageFileE = image!;
+                          imageAvailableE=true;
+                        });
+                      },
+                      child: Container(
+                        height: 120,
+                        width: 120,
                         decoration: BoxDecoration(
-                          border: Border.all(width: 2, color: const Color.fromARGB(255, 18, 18, 18)),
-                          //borderRadius: BorderRadius.circular(10)
+                          color: Colors.grey[100]
                         ),
-                        child: _selectedImage != null
-                            ? Image.file(_selectedImage!, fit: BoxFit.fill,)
-                            : Center(
-                                child: Icon(Icons.add_a_photo))),
+                        child: imageAvailableE?Image.memory(imageFileE) :Icon(Icons.add_a_photo),
+                      ),
+                    ),
                   ),
-                  Column(children: [
-                    IconButton(
-                        onPressed: () {
-                          
-                          _pickImage();
-                          
-                        },
-                        icon: Icon(Icons.photo_library_outlined),tooltip: "select from gallery",),
-                  ])
                 ]),SizedBox(height: 20,),
                              TextFormField(
                       controller: _editController,
@@ -282,7 +237,7 @@ class _DepartmentPageState extends State<DepartmentPage> {
               ElevatedButton(onPressed: (){
                     //print("add button clicked");
                   
-                    editDepartment(id,_editController.text,_selectedImage!.path as Uint8List);
+                    editDepartment(id,_editController.text,imageFileE);
                     
                     _departmentController.clear();
                     Navigator.pop(context);
@@ -295,17 +250,5 @@ class _DepartmentPageState extends State<DepartmentPage> {
              ),
       );
        }, );
-  }
-
-  //IMAGE FROM PHOTOS
-Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
-
-    if (pickedImage != null) {
-      setState(() {
-        _selectedImage = File(pickedImage.path);
-      });
-    }
   }
 }

@@ -1,5 +1,7 @@
 
 
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:medilink/admin/model/doctor_model.dart';
@@ -43,7 +45,7 @@ Future<int> doctorStats() async{
 
 Future<void> editDoctor(
   int id, 
-  String updatedPhoto,
+  Uint8List updatedPhoto,
   String updatedName,
   String updatedGender,
   String updatedQualification,
@@ -61,7 +63,7 @@ Future<void> editDoctor(
   }
   else{
     // Update 
-    existingDoctor.photo=updatedPhoto;
+    existingDoctor.photo=updatedPhoto as Uint8List;
     existingDoctor.name = updatedName;
     existingDoctor.gender=updatedGender;
     existingDoctor.qualification=updatedQualification;

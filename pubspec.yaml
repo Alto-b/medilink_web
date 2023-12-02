@@ -33,6 +33,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   email_auth: ^1.1.1
   file_picker: ^6.1.1
+  firebase_core: ^2.24.0
   flutter:
     sdk: flutter
   flutter_date_pickers: ^0.4.2

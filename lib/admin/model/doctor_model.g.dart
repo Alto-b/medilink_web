@@ -24,7 +24,7 @@ class DoctorModelAdapter extends TypeAdapter<DoctorModel> {
       doj: fields[5] as String,
       hospital: fields[6] as String,
       specialization: fields[7] as String,
-      photo: fields[8] as String,
+      photo: fields[8] as Uint8List,
       id: fields[0] as int?,
     );
   }

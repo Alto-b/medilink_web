@@ -16,5 +16,7 @@ class DepartmentModel extends HiveObject{
   @HiveField(2)
     Uint8List photo;
 
+  
+
   DepartmentModel({required this.dept,required this.photo, this.id});
 }

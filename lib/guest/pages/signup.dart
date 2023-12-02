@@ -11,6 +11,7 @@ import 'package:medilink/guest/pages/login.dart';
 import 'package:email_auth/email_auth.dart';
 import 'package:medilink/main.dart';
 import 'package:medilink/user/mainpage.dart';
+import 'package:medilink/user/navbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -46,130 +47,135 @@ class _SignUpPageState extends State<SignUpPage> {
             SizedBox(height: 50,),
             Image.asset('lib/assets/medilink.png',width: 200,),
             SizedBox(height: 30,),
-            Form(
-              key: _formKey,
-              child: Column(
-              children: [
-    
-                //full name
-                TextFormField(
-                  validator: validateFullName,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  controller: _nameController,
-                  decoration: InputDecoration(
-                    hintText: "Full Name",
+            Align(
+              child: Container(
+                width: 500,
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                  children: [
+                  
+                    //full name
+                    TextFormField(
+                      validator: validateFullName,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      controller: _nameController,
+                      decoration: InputDecoration(
+                        hintText: "Full Name",
+                        ),
+                      
                     ),
                   
-                ),
-    
-                SizedBox(height: 20,),
-    
-                //date of birth
-                TextFormField(
-                  validator: (value){
-                    if(value == null || value.isEmpty){
-                      return "select date of birth";
-                    }
-                    return null;
-                  },
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  controller: _dobController,
-                  decoration: InputDecoration(
-                    //label: Text("dob"),
-                    hintText: "Date Of Birth"
-                  ),
-                  readOnly: true,
-                  onTap: (){
-                    //print("date picker");
-                    _selectDate(context);
-                     },
-                ),
-    
-                SizedBox(height: 20,),
-    
-                //gender selection
-                DropdownButtonFormField(
-                  validator: (value){
-                    if(value == null || value.isEmpty){
-                      return "select a gender";
-                    }
-                    return null;
-                  },
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  value: selectedGender,
-                  items:genderOptions.map((String gender) {
-                    return DropdownMenuItem<String>(
-                      value: gender,
-                      child: Text(gender)
-                      );
-                  }).toList() ,
-                   onChanged: (String? newValue){
-                    setState(() {
-                      selectedGender=newValue!;
-                    });
-                   },
-                   decoration: InputDecoration(
-                    hintText: "Gender"
-                   ),),
-    
-                   SizedBox(height: 20,),
-    
-                   //email 
-                TextFormField(
-                  validator:validateEmail ,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  keyboardType: TextInputType.emailAddress,
-                  controller: _emailController,
-                  decoration: InputDecoration(
-                    hintText: "Email"
-                  ),
-                ),
-               SizedBox(height: 30,),
-               //password
-               TextFormField(
-                  validator:validatepassword ,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  obscureText: true,
-                  controller: _passwordController,
-                  decoration: InputDecoration(
-                    hintText: "Password"
-                  ),
-                ),
-                 SizedBox(height: 30,),
-               //confirm password
-               TextFormField(
-                  validator: validatecpassword ,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  obscureText: true,
-                  controller: _cpasswordController,
-                  decoration: InputDecoration(
-                    hintText: "Confirm Password"
-                  ),
-                ),
-                SizedBox(height: 20,),
-
-               ElevatedButton(onPressed: (){
-                   //addUserbutton();
-                   userCheck(_emailController.text);
-                },
-                 style:ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 9, 212, 114),
+                    SizedBox(height: 20,),
                   
-                 ),
-                 child: Text("Proceed",style: TextStyle(
-                  color: Colors.white
-                 ),)
-                 ),
-
-              SizedBox(height: 15,),
-
-              //to login
-              TextButton(onPressed: (){
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage(),));
-              }, child: Text("Already has an account ?")),
+                    //date of birth
+                    TextFormField(
+                      validator: (value){
+                        if(value == null || value.isEmpty){
+                          return "select date of birth";
+                        }
+                        return null;
+                      },
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      controller: _dobController,
+                      decoration: InputDecoration(
+                        //label: Text("dob"),
+                        hintText: "Date Of Birth"
+                      ),
+                      readOnly: true,
+                      onTap: (){
+                        //print("date picker");
+                        _selectDate(context);
+                         },
+                    ),
+                  
+                    SizedBox(height: 20,),
+                  
+                    //gender selection
+                    DropdownButtonFormField(
+                      validator: (value){
+                        if(value == null || value.isEmpty){
+                          return "select a gender";
+                        }
+                        return null;
+                      },
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      value: selectedGender,
+                      items:genderOptions.map((String gender) {
+                        return DropdownMenuItem<String>(
+                          value: gender,
+                          child: Text(gender)
+                          );
+                      }).toList() ,
+                       onChanged: (String? newValue){
+                        setState(() {
+                          selectedGender=newValue!;
+                        });
+                       },
+                       decoration: InputDecoration(
+                        hintText: "Gender"
+                       ),),
+                  
+                       SizedBox(height: 20,),
+                  
+                       //email 
+                    TextFormField(
+                      validator:validateEmail ,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      keyboardType: TextInputType.emailAddress,
+                      controller: _emailController,
+                      decoration: InputDecoration(
+                        hintText: "Email"
+                      ),
+                    ),
+                   SizedBox(height: 30,),
+                   //password
+                   TextFormField(
+                      validator:validatepassword ,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      obscureText: true,
+                      controller: _passwordController,
+                      decoration: InputDecoration(
+                        hintText: "Password"
+                      ),
+                    ),
+                     SizedBox(height: 30,),
+                   //confirm password
+                   TextFormField(
+                      validator: validatecpassword ,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      obscureText: true,
+                      controller: _cpasswordController,
+                      decoration: InputDecoration(
+                        hintText: "Confirm Password"
+                      ),
+                    ),
+                    SizedBox(height: 20,),
               
-              ],
-            ))
+                   ElevatedButton(onPressed: (){
+                       //addUserbutton();
+                       userCheck(_emailController.text);
+                    },
+                     style:ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 9, 212, 114),
+                      
+                     ),
+                     child: Text("Proceed",style: TextStyle(
+                      color: Colors.white
+                     ),)
+                     ),
+              
+                  SizedBox(height: 15,),
+              
+                  //to login
+                  TextButton(onPressed: (){
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage(),));
+                  }, child: Text("Already has an account ?")),
+                  
+                  ],
+                )),
+              ),
+            )
           ],
           
         ),
@@ -353,7 +359,7 @@ if(user != null){
   SharedPreferences prefs = await SharedPreferences.getInstance();
   await prefs.setBool(SAVE_KEY_NAME, true);
   await saveUserEmail(email);
-  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainPage(),));
+  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ResponsiveNavbar(),));
 
 }
 else{

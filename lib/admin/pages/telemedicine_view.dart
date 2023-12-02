@@ -36,6 +36,11 @@ class _TelemedicineViewPageState extends State<TelemedicineViewPage> {
                       valueListenable: telemedicineListNotifier,
                       builder: (BuildContext ctx, List<TelemedicineModel> feedbackList,Widget? child) {
                         
+                           if (feedbackList.isEmpty) {
+                    return Center(
+                      child: Text("No enquiries"),
+                    );
+                  }
                       
                       return ListView.separated(
                       itemBuilder:((context, index) {

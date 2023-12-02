@@ -85,203 +85,182 @@ void calculateAge() {
           children: [
             Padding(
               padding: const EdgeInsets.all(30.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    SizedBox(height: 20,),
-      //               Row(
-      //                 mainAxisSize: MainAxisSize.min,
-      //                 children: [
-      // // Title Dropdown
-      //                   DropdownButtonFormField<String>(
-      //                     hint:Text("Title"),
-      //                     value: selectedTitle,
-      //                     onChanged: (String? newValue) {
-      //                       setState(() {
-      //                         selectedTitle = newValue;
-      //                       });
-      //                     },
-      //                     items: titles.map((String title) {
-      //                       return DropdownMenuItem<String>(
-      //                         value: title,
-      //                         child: Text(title), 
-      //                       );
-      //                     }).toList(),
-      //                   ),SizedBox(width: 20,),
-      
-      // //Full Name
-      //               Expanded(
-      //                 child: TextFormField(
-      //                   controller: _nameController,
-      //                   validator: validateFullName,
-      //                   decoration: InputDecoration(
-      //                     hintText: "Full Name",
-      //                   ),
-      //                 ),
-      //               ),
-      //                 ],
-      //               ),SizedBox(height: 20,),
-
-       DropdownButtonFormField<String>(
-        validator: (value){
-                      if(value == null || value.isEmpty){
-                        return "select a gender";
-                      }
-                      return null;
-                    },
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-        decoration: InputDecoration(
-          prefixIcon: Icon(Icons.title),
-        ),
-         hint:Text("Title"),
-         value: selectedTitle,
-         onChanged: (String? newValue) {
-           setState(() {
-             selectedTitle = newValue;
-           });
-         },
-         items: titles.map((String title) {
-           return DropdownMenuItem<String>(
-             value: title,
-             child: Text(title), 
-           );
-         }).toList(),
-       ),
-       SizedBox(height: 20,),
-      
-      //Full Name
-                    TextFormField(
-       controller: _nameController,
-       validator: validateFullName,
-       autovalidateMode: AutovalidateMode.onUserInteraction,
-       decoration: InputDecoration(
-        prefixIcon: Icon(Icons.abc),
-         hintText: "Full Name",
-       ),
-                    ),SizedBox(height: 20,),
-      
-      
-      //gender selection
-                  DropdownButtonFormField(
-                    validator: (value){
-                      if(value == null || value.isEmpty){
-                        return "select a gender";
-                      }
-                      return null;
-                    },
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    value: selectedGender,
-                    items:genderOptions.map((String gender) {
-                      return DropdownMenuItem<String>(
-                        value: gender,
-                        child: Text(gender)
-                        );
-                    }).toList() ,
-                     onChanged: (String? newValue){
-                      setState(() {
-                        selectedGender=newValue!;
-                      });
-                     },
-                     decoration: InputDecoration(
-                      //prefixIcon: FaIcon(FontAwesomeIcons.marsAndVenus,color: Colors.grey,),
-                      prefixIcon: Icon(Icons.arrow_right_rounded,color: Colors.grey,),
-                      hintText: "Gender"
-                     ),),SizedBox(height: 20,),
-      
-      //date of birth
-                  TextFormField(
-                    validator: (value){
-                      if(value == null || value.isEmpty){
-                        return "select date of birth";
-                      }
-                      return null;
-                    },
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    controller: _dobController,
-                    decoration: InputDecoration(
-                      //label: Text("dob"),
-                      prefixIcon: Icon(Icons.calendar_month,color: Colors.grey,),
-                      hintText: "Date Of Birth"
-                    ),
-                    readOnly: true,
-                    onTap: (){
-                      //print("date picker");
-                      _selectDate(context);
-                       },
-                  ),SizedBox(height: 20,),
-      
-      //marital status drop down
-                  DropdownButtonFormField(
-                    validator: (value){
-                      if(value == null || value.isEmpty){
-                        return "select a status";
-                      }
-                      return null;
-                    },
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    value: selectedMarital,
-                    items:maritalOptions.map((String marital) {
-                      return DropdownMenuItem<String>(
-                        value: marital,
-                        child: Text(marital)
-                        );
-                    }).toList() ,
-                     onChanged: (String? newValue){
-                      setState(() {
-                        selectedMarital=newValue!;
-                      });
-                     },
-                     decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.arrow_right_rounded,color: Colors.grey,),
-                      hintText: "Marital Status"
-                     ),),SizedBox(height: 20,),
-      
-      //email 
-                  TextFormField(
-                    validator:validateEmail ,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    keyboardType: TextInputType.emailAddress,
-                    controller: _emailController,
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.email,color: Colors.grey,),
-                      hintText: "Email"
-                    ),
-                  ),SizedBox(height: 20,),
-      //Mobile Number
-                  TextFormField(
-                    validator:validateNumber ,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    keyboardType: TextInputType.emailAddress,
-                    controller: _mobileController,
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.call,color: Colors.grey,),
-                      hintText: "Mobile"
-                    ),
-                  ),SizedBox(height: 20,),
-      
-      //address textfield
-                    TextFormField(
-                      controller: _addressController,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      validator: validateEmpty,
-                      decoration: InputDecoration(
-                        hintText: "Address",
-                        prefixIcon: Icon(Icons.home,color: Colors.grey,),
+              child: Align(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.circular(20)
+                   ),width: 500,
+                  child: Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          SizedBox(height: 20,),
+                          
+                         DropdownButtonFormField<String>(
+                          validator: (value){
+                            if(value == null || value.isEmpty){
+                              return "select a gender";
+                            }
+                            return null;
+                          },
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          decoration: InputDecoration(
+                            prefixIcon: Icon(Icons.title),
+                          ),
+                           hint:Text("Title"),
+                           value: selectedTitle,
+                           onChanged: (String? newValue) {
+                             setState(() {
+                               selectedTitle = newValue;
+                             });
+                           },
+                           items: titles.map((String title) {
+                             return DropdownMenuItem<String>(
+                               value: title,
+                               child: Text(title), 
+                             );
+                           }).toList(),
+                         ),
+                         SizedBox(height: 20,),
+                        
+                        //Full Name
+                          TextFormField(
+                         controller: _nameController,
+                         validator: validateFullName,
+                         autovalidateMode: AutovalidateMode.onUserInteraction,
+                         decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.abc),
+                           hintText: "Full Name",
+                         ),
+                          ),SizedBox(height: 20,),
+                        
+                        
+                        //gender selection
+                        DropdownButtonFormField(
+                          validator: (value){
+                            if(value == null || value.isEmpty){
+                              return "select a gender";
+                            }
+                            return null;
+                          },
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          value: selectedGender,
+                          items:genderOptions.map((String gender) {
+                            return DropdownMenuItem<String>(
+                              value: gender,
+                              child: Text(gender)
+                              );
+                          }).toList() ,
+                           onChanged: (String? newValue){
+                            setState(() {
+                              selectedGender=newValue!;
+                            });
+                           },
+                           decoration: InputDecoration(
+                            //prefixIcon: FaIcon(FontAwesomeIcons.marsAndVenus,color: Colors.grey,),
+                            prefixIcon: Icon(Icons.arrow_right_rounded,color: Colors.grey,),
+                            hintText: "Gender"
+                           ),),SizedBox(height: 20,),
+                        
+                        //date of birth
+                        TextFormField(
+                          validator: (value){
+                            if(value == null || value.isEmpty){
+                              return "select date of birth";
+                            }
+                            return null;
+                          },
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          controller: _dobController,
+                          decoration: InputDecoration(
+                            //label: Text("dob"),
+                            prefixIcon: Icon(Icons.calendar_month,color: Colors.grey,),
+                            hintText: "Date Of Birth"
+                          ),
+                          readOnly: true,
+                          onTap: (){
+                            //print("date picker");
+                            _selectDate(context);
+                             },
+                        ),SizedBox(height: 20,),
+                        
+                        //marital status drop down
+                        DropdownButtonFormField(
+                          validator: (value){
+                            if(value == null || value.isEmpty){
+                              return "select a status";
+                            }
+                            return null;
+                          },
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          value: selectedMarital,
+                          items:maritalOptions.map((String marital) {
+                            return DropdownMenuItem<String>(
+                              value: marital,
+                              child: Text(marital)
+                              );
+                          }).toList() ,
+                           onChanged: (String? newValue){
+                            setState(() {
+                              selectedMarital=newValue!;
+                            });
+                           },
+                           decoration: InputDecoration(
+                            prefixIcon: Icon(Icons.arrow_right_rounded,color: Colors.grey,),
+                            hintText: "Marital Status"
+                           ),),SizedBox(height: 20,),
+                        
+                        //email 
+                        TextFormField(
+                          validator:validateEmail ,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          keyboardType: TextInputType.emailAddress,
+                          controller: _emailController,
+                          decoration: InputDecoration(
+                            prefixIcon: Icon(Icons.email,color: Colors.grey,),
+                            hintText: "Email"
+                          ),
+                        ),SizedBox(height: 20,),
+                        //Mobile Number
+                        TextFormField(
+                          validator:validateNumber ,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          keyboardType: TextInputType.emailAddress,
+                          controller: _mobileController,
+                          decoration: InputDecoration(
+                            prefixIcon: Icon(Icons.call,color: Colors.grey,),
+                            hintText: "Mobile"
+                          ),
+                        ),SizedBox(height: 20,),
+                        
+                        //address textfield
+                          TextFormField(
+                            controller: _addressController,
+                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                            validator: validateEmpty,
+                            decoration: InputDecoration(
+                              hintText: "Address",
+                              prefixIcon: Icon(Icons.home,color: Colors.grey,),
+                            ),
+                            maxLines: null,
+                            keyboardType: TextInputType.multiline,
+                                              
+                           ),
+                           SizedBox(height: 30,),
+                                  
+                           //submit button
+                           ElevatedButton(onPressed: (){
+                            addAppointmentButton();
+                           }, child: Text("Submit"))
+                        
+                          
+                        ],
                       ),
-                      maxLines: null,
-                      keyboardType: TextInputType.multiline,
-                                        
-                     ),
-                     SizedBox(height: 30,),
-
-                     //submit button
-                     ElevatedButton(onPressed: (){
-                      addAppointmentButton();
-                     }, child: Text("Submit"))
-      
-                    
-                  ],
+                    ),
+                  ),
                 ),
               ),
             ),

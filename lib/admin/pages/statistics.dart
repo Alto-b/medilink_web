@@ -10,6 +10,7 @@ import 'package:medilink/admin/pages/appointment_view.dart';
 import 'package:medilink/admin/pages/doctor_list.dart';
 import 'package:medilink/admin/pages/telemedicine_view.dart';
 import 'package:medilink/guest/db/user_functions.dart';
+import 'package:medilink/guest/pages/login.dart';
 import 'package:medilink/styles/custom_widgets.dart';
 
 class StatisticsPage extends StatefulWidget {
@@ -25,6 +26,11 @@ class _StatisticsPageState extends State<StatisticsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("STATISTICS",style: appBarTitleStyle(),),
+        actions: [
+          // IconButton(onPressed: () {
+          //   Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage(),));
+          // }, icon:Icon( Icons.logout))
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(30.0),

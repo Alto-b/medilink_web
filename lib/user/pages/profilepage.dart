@@ -102,7 +102,7 @@ void calculateAge() {
               padding: const EdgeInsets.all(20.0),
               child: Container(
                 decoration: optionsBoxDecoration(),
-                height: 400,
+                height: 400,width: 500,
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: Column(

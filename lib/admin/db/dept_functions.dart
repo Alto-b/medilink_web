@@ -66,7 +66,7 @@ Future<void> editDepartment(int id, String updatedDepartmentName,Uint8List updat
   else{
     // Update the department's name
     existingDepartment.dept = updatedDepartmentName;
-    existingDepartment.photo=updatedPhoto;
+    existingDepartment.photo=updatedPhoto as Uint8List;
 
     // Save the updated department back to Hive
     await deptBox.put(id, existingDepartment);

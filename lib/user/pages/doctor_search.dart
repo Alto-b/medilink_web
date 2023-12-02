@@ -54,7 +54,7 @@ class DoctorSearchDelegate extends SearchDelegate<DoctorModel> {
         final data = filteredHospitals[index];
         return ListTile(
           leading: CircleAvatar(
-            backgroundImage:FileImage(File(data.photo)),
+            backgroundImage:MemoryImage(data.photo)
           ),
           title: Text(data.name),
           onTap: () {

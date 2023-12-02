@@ -34,6 +34,11 @@ class _AppointmentViewPageState extends State<AppointmentViewPage> {
                       valueListenable: appointmentListNotifier,
                       builder: (BuildContext ctx, List<AppointmentModel> appointmentList,Widget? child) {
                         
+                        if (appointmentList.isEmpty) {
+                    return Center(
+                      child: Text("No appointments"),
+                    );
+                  }
                       
                       return ListView.separated(
                       itemBuilder:((context, index) {

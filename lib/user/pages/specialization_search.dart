@@ -55,7 +55,7 @@ class SpecializationSearchDelegate extends SearchDelegate<DepartmentModel> {
         return ListTile(
           leading: CircleAvatar(
             //backgroundImage:FileImage(File(data.photo)),
-            backgroundImage: MemoryImage(data.photo),
+            //backgroundImage: MemoryImage(data.photo),
           ),
           title: Text(data.dept),
           onTap: () {

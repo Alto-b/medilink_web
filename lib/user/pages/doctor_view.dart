@@ -53,7 +53,15 @@ class _DoctorViewPageState extends State<DoctorViewPage> {
                       child: ValueListenableBuilder(
                         valueListenable: doctorListNotifier,
                         builder: (BuildContext ctx, List<DoctorModel> doctorList,Widget? child) {
-        
+          if (doctorList.isEmpty) {
+                    return Center(
+                      child: Text("Will be updated soon",
+                      style: GoogleFonts.play(
+                        fontWeight: FontWeight.w700,
+                        fontSize:20,
+                        color: Colors.grey),),
+                    );
+                  }
                         return ListView.separated(
                         itemBuilder:((context, index) {
                           final data=doctorList[index];
@@ -62,7 +70,7 @@ class _DoctorViewPageState extends State<DoctorViewPage> {
                             child: ListTile(
                               onTap: () {
                                 //_detailSheet(context,data.id!,data.dob,data.doj,data.gender,data.hospital,data.name,data.photo,data.qualification,data.specialization);
-                              _detailSheet(context, data.id!, data.name,data.dob,data.doj, data.gender, data.photo, data.qualification, data.qualification,data.hospital);
+                              _detailSheet(context, data.id!, data.name,data.dob,data.doj, data.gender, data.photo as String, data.qualification, data.qualification,data.hospital);
                               },
                               //tileColor: Colors.blue,
                               horizontalTitleGap: 10,
@@ -70,7 +78,7 @@ class _DoctorViewPageState extends State<DoctorViewPage> {
                               //leading: Text("${index+1}",),
                               leading: CircleAvatar(
                                 radius: 40,
-                                backgroundImage: FileImage(File(data.photo)),
+                                backgroundImage: MemoryImage(data.photo)
                               ),
                               title: Text("Dr.${data.name}",style:doctorListTitle(),),
                               contentPadding: EdgeInsets.all(5),      

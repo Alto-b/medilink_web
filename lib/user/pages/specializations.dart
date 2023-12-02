@@ -1,9 +1,8 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
-import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:medilink/admin/db/dept_functions.dart';
 import 'package:medilink/admin/model/deptmodel.dart';
 import 'package:medilink/styles/custom_widgets.dart';
@@ -115,7 +114,15 @@ final  TextEditingController _searchController = TextEditingController();
             ? departmentList
             : departmentList.where((dept) =>
                 dept.dept.toLowerCase().contains(_searchController.text.toLowerCase())).toList();
-    
+    if (departmentList.isEmpty) {
+                    return Center(
+                      child: Text("Will be updated soon",
+                      style: GoogleFonts.play(
+                        fontWeight: FontWeight.w700,
+                        fontSize:20,
+                        color: Colors.grey),),
+                    );
+                  }    
         return GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
@@ -142,7 +149,7 @@ final  TextEditingController _searchController = TextEditingController();
                         // backgroundImage: FileImage(
                         //   File(data.photo),
                         // ),
-                        backgroundImage: MemoryImage(data.photo),
+                        //backgroundImage: MemoryImage(data.photo),
                       ),
                       Text(
                         data.dept,

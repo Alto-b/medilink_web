@@ -1,5 +1,7 @@
 
 
+import 'dart:typed_data';
+
 import 'package:hive_flutter/hive_flutter.dart';
 part 'doctor_model.g.dart';
 
@@ -31,7 +33,7 @@ class DoctorModel{
    String specialization;
 
   @HiveField(8)
-  String photo; 
+  Uint8List photo; 
 
   DoctorModel({required this.name,required this.gender,required this.qualification,required this.dob,required this.doj,required this.hospital,required this.specialization,required this.photo, this.id});
 
