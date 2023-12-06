@@ -56,6 +56,14 @@ Future<void> main() async {
     Hive.registerAdapter(DoctorModelAdapter());
   }
 
+  await Firebase.initializeApp(
+      options: const FirebaseOptions(
+          apiKey: "AIzaSyAo672yNWvIr9KSMw4t4Bhc6Re091gfDLQ",
+          appId: "1:865145249083:web:ca8fbd8f6e132794e42b1e",
+          messagingSenderId: "865145249083",
+          projectId: "medilink-web-95d80",
+          storageBucket: "medilink-web-95d80.appspot.com"));
+
   runApp( MyApp());
 }
 
