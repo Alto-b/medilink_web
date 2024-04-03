@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:medilink/guest/model/usermodel.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 ValueNotifier<List<UserModel>> userListNotifier=ValueNotifier([]);
 
